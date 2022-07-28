@@ -1,5 +1,5 @@
 import os
-from pickle import FALSE
+
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -126,10 +126,10 @@ LOGIN_REDIRECT_URL = 'posts:index'
 # LOGOUT_REDIRECT_URL = 'posts:index'
 
 #  подключаем движок filebased.EmailBackend
-#EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
+# EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
 # указываем директорию, в которую будут складываться файлы писем
-#EMAIL_FILE_PATH = os.path.join(BASE_DIR, 'sent_emails')
-CSRF_FAILURE_VIEW = 'core.views.csrf_failure' # costom page errors
+# EMAIL_FILE_PATH = os.path.join(BASE_DIR, 'sent_emails')
+CSRF_FAILURE_VIEW = 'core.views.csrf_failure'  # costom page errors
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')

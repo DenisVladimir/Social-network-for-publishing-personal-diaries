@@ -4,10 +4,7 @@ from django.urls import reverse
 from posts.models import Group, Post
 
 # 6 sprint
-import shutil
-import tempfile
 from django.core.files.uploadedfile import SimpleUploadedFile
-from django.conf import settings
 
 User = get_user_model()
 
@@ -93,7 +90,7 @@ class PostFormTests(TestCase):
         )
         self.assertEqual(edit_post_var.text, form_data['text'])
         self.assertEqual(edit_post_var.author, self.post.author)
-    
+
     # Дополнительные тесты к 6 спринту
 
     def test_post_with_picture(self):
@@ -117,7 +114,7 @@ class PostFormTests(TestCase):
             'group': self.group.id,
             'image': uploaded
         }
-        response = self.authorized_client.post(
+        self.authorized_client.post(
             reverse('posts:post_create'),
             data=form_data,
             follow=True,

@@ -7,7 +7,6 @@ from django.urls import reverse
 from posts.models import Group, Post, Follow
 
 # 6 sprint
-import shutil
 import tempfile
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.conf import settings
@@ -52,16 +51,15 @@ class PostPagesTest(TestCase):
         self.guest_client = Client()
         self.authorized_client = Client()
         self.authorized_client.force_login(PostPagesTest.user)
-    
-    
+
     def test_pages_user_correct_template(self):
         template_pages_names = {
-            #'posts/index.html': reverse('posts:index'),
+            # 'posts/index.html': reverse('posts:index'),
             'posts/group_list.html': reverse(
                 'posts:group_list', kwargs={'slug': 'test_slug'}
             ),
             'posts/profile.html': reverse(
-               'posts:profile', kwargs={'username': 'StasVlasov'}
+                'posts:profile', kwargs={'username': 'StasVlasov'}
             ),
             'posts/create_post.html': reverse(
                 'posts:update_post', kwargs={'post_id': 1}
@@ -73,12 +71,12 @@ class PostPagesTest(TestCase):
         for template, reverse_name in template_pages_names.items():
             with self.subTest(reverse_name=reverse_name):
                 response = self.authorized_client.get(reverse_name)
-                #print(response, template)
+                # print(response, template)
                 self.assertTemplateUsed(response, template)
                 self.assertEqual(response.status_code, HTTPStatus.OK)
-    
+
     def test_post_create_page_correct_template(self):
-        #Проверка корректности возвращемого шаблона страницей create.
+        # Проверка корректности возвращемого шаблона страницей create.
         response = self.authorized_client.get(reverse('posts:post_create'))
         self.assertTemplateUsed(response, 'posts/create_post.html')
     """
@@ -177,19 +175,21 @@ class PostPagesTest(TestCase):
 
     # 6 sprint
     def test_correct_context_image(self):
-        """ Шаблон сформирован с правильным контекстом  picture """      
+        """ Шаблон сформирован с правильным контекстом  picture """
         post_image = PostPagesTest.post.image
         template_pages_names = [
-            #reverse('posts:index'),
+            # sreverse('posts:index'),
             reverse('posts:group_list', kwargs={'slug': 'test_slug'}),
-            reverse('posts:profile', kwargs={'username': 'StasVlasov'}),       
+            reverse('posts:profile', kwargs={'username': 'StasVlasov'}),
         ]
         for reverse_pages in template_pages_names:
             response = self.authorized_client.get(reverse_pages)
-            first_object = response.context['page_obj'][0]      
+            first_object = response.context['page_obj'][0]
             posts_image_0 = first_object.image
-            self.assertEqual(posts_image_0, post_image)        
-        response_2 = self.authorized_client.get(reverse('posts:post_detail', kwargs={'post_id': 1}))        
+            self.assertEqual(posts_image_0, post_image)
+        response_2 = self.authorized_client.get(
+            reverse('posts:post_detail', kwargs={'post_id': 1})
+        )
         posts_image_1 = response_2.context.get('post').image
         self.assertEqual(posts_image_1, post_image)
 
@@ -215,7 +215,7 @@ class FollowTests(TestCase):
             )
         )
         self.assertEqual(Follow.objects.all().count(), 1)
-    
+
     def test_unfollow(self):
         self.client_auth_follower.get(reverse('posts:profile_follow',
                                               kwargs={'username':
@@ -225,9 +225,9 @@ class FollowTests(TestCase):
                                       kwargs={'username':
                                               self.user_following.username}))
         self.assertEqual(Follow.objects.all().count(), 0)
-   
+
     def test_subscription_feed(self):
-        #запись появляется в ленте подписчиков
+        # запись появляется в ленте подписчиков
         Follow.objects.create(user=self.user_follower,
                               author=self.user_following)
         response = self.client_auth_follower.get('/follow/')
@@ -253,5 +253,4 @@ class FollowTests(TestCase):
             get(f'/following/{self.post.id}/')
         self.assertNotContains(response, 'комментарий от гостя')
 
-   
     """
