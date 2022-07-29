@@ -3,9 +3,13 @@
   Записи сообщества {{ group }}
 {% endblock %}
 {% block content %}
+{% block header %}
+  <h1>{{group.title}}</h1>
+{% endblock %}
 <h1>Лев Толстой - зеркало русской революции.</h1>
-  <p> {{ group }} </p>
+  <p> {{ group.title}} </p>
   {% for post in page_obj %} 
-  {%include 'includes/post_card.html'%} 
+    {%include 'includes/post_card.html'%} 
   {% endfor %}  
+  {% include 'posts/includes/paginator.html' %}
 {% endblock %}
