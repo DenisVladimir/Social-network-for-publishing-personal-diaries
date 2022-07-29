@@ -55,10 +55,10 @@ class StaticURLTests(TestCase):
 
     def test_urls_uses_correct_template(self):
         template_url_names = {
-            #'posts/index.html': '/',
+            # 'posts/index.html': '/',
             'posts/group_list.html': '/group/test_slug/',
             'posts/profile.html': f'/profile/{StaticURLTests.user.username}/',
-            'posts/post_detail.html': 
+            'posts/post_detail.html':
             f'/post_detail/{StaticURLTests.post.pk}/',
             'posts/create_post.html': '/posts/84/edit/',
         }
