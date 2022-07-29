@@ -35,7 +35,7 @@ class StaticURLTests(TestCase):
             '/': HTTPStatus.OK,
             f'/group/{StaticURLTests.group.slug}/': HTTPStatus.OK,
             f'/profile/{StaticURLTests.user.username}/': HTTPStatus.OK,
-            f'/post_detail/{StaticURLTests.post.pk}/': HTTPStatus.OK,
+            f'/posts/{StaticURLTests.post.pk}/': HTTPStatus.OK,
             '/unixisting_page': HTTPStatus.NOT_FOUND,
         }
         for address, st_code in url_names.items():
@@ -59,7 +59,7 @@ class StaticURLTests(TestCase):
             'posts/group_list.html': '/group/test_slug/',
             'posts/profile.html': f'/profile/{StaticURLTests.user.username}/',
             'posts/post_detail.html':
-            f'/post_detail/{StaticURLTests.post.pk}/',
+            f'/posts/{StaticURLTests.post.pk}/',
             'posts/create_post.html': '/posts/84/edit/',
         }
 
