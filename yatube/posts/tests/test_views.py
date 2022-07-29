@@ -164,7 +164,7 @@ class PostPagesTest(TestCase):
 
     def test_additional_to_enter_posts_all(self):
         address = [
-            reverse('posts:index'),
+            # reverse('posts:index'),
             reverse('posts:group_list', kwargs={'slug': 'test_slug'}),
             reverse('posts:profile', kwargs={'username': 'StasVlasov'})
         ]
