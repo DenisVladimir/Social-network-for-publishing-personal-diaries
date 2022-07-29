@@ -3,10 +3,10 @@
   Записи сообщества {{ group }}
 {% endblock %}
 {% block content %}
-{% block header %}
-  <h1>{{group.title}}</h1>
-{% endblock %}
-  <p> {{ group.descripton }} </p>
+  {% block header %}
+    <h1>{{ group.title }}</h1>
+  {% endblock %}
+  <p> {{ group.description }} </p>
   {% for post in page_obj %} 
     {%include 'includes/post_card.html'%} 
   {% endfor %}  
