@@ -7,7 +7,7 @@
   <h1>{{group.title}}</h1>
 {% endblock %}
 <h1>Лев Толстой - зеркало русской революции.</h1>
-  <p> {{ group.title}} </p>
+  <p> {{ group }} </p>
   {% for post in page_obj %} 
     {%include 'includes/post_card.html'%} 
   {% endfor %}  

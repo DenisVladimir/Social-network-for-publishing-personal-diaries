@@ -44,7 +44,9 @@ def profile(request, username):
     amount_posts = post_list.count()
     all_following = Follow.objects.filter(user_id=request.user.pk)
     if request.user == author:
-        following = False
+        assert False, (
+            "Нельзя подписаться на самого себя"
+        )
     else:
         following = Source_author(all_following, username)
     page_obj = My_paginator(request, post_list, NUM_OF_POSTS)
