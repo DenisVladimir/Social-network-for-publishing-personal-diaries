@@ -43,7 +43,10 @@ def profile(request, username):
     post_list = author.posts.all()
     amount_posts = post_list.count()
     all_following = Follow.objects.filter(user_id=request.user.pk)
-    following = Source_author(all_following, request.user, username)
+    if request.user == author:
+        following = False
+    else:
+        following = Source_author(all_following, username)
     page_obj = My_paginator(request, post_list, NUM_OF_POSTS)
     context = {
         'author': author,

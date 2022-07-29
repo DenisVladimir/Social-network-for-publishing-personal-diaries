@@ -8,7 +8,7 @@ def My_paginator(request, post_list, NUM_OF_POSTS):
     return page_obj
 
 
-def Source_author(all_fallower, user, username):
+def Source_author(all_fallower, username):
     for follow in all_fallower:
         if str(username) == str(follow.author):
             return True
