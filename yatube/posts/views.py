@@ -39,14 +39,14 @@ def group_posts(request, slug):
 
 def profile(request, username):
     template = 'posts/profile.html'
-    user = get_object_or_404(User, username=username)
-    post_list = user.posts.all()
+    author = get_object_or_404(User, username=username)
+    post_list = author.posts.all()
     amount_posts = post_list.count()
     all_following = Follow.objects.filter(user_id=request.user.pk)
     following = Source_author(all_following, username)
     page_obj = My_paginator(request, post_list, NUM_OF_POSTS)
     context = {
-        'user': user,
+        'author': author,
         'page_obj': page_obj,
         'amount_posts': amount_posts,
         'following': following,
@@ -140,6 +140,9 @@ def follow_index(request):
 
 @login_required
 def profile_follow(request, username):
+    assert  str(request.user) == str(username), (
+            "Нельзя подписаться на себя "
+    )
     author = get_object_or_404(User, username=username)
     Follow.objects.create(
         author_id=author.pk,

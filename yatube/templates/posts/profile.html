@@ -1,21 +1,21 @@
 {% extends 'base.html' %}
 {% load thumbnail %} <!-- Работа с картинками -->
-{% block title %}Профайл пользователя {{user.username}}{% endblock %}
+{% block title %}Профайл пользователя {{author.username}}{% endblock %}
 {% block content %}
-<h1>Все посты пользователя {{user.username}} </h1>
+<h1>Все посты пользователя {{author.username}} </h1>
 <h3>Всего постов: {{ amount_posts }} </h3>
 
 {% if following %}
     <a
       class="btn btn-lg btn-light"
-      href="{% url 'posts:profile_unfollow' user.username %}" role="button"
+      href="{% url 'posts:profile_unfollow' author.username %}" role="button"
     > 
       Отписаться
     </a> <!-- В ссылке может оказаться  author -->
 {% else %}
       <a
         class="btn btn-lg btn-primary"
-        href="{% url 'posts:profile_follow' user.username %}" role="button"
+        href="{% url 'posts:profile_follow' author.username %}" role="button"
       >
         Подписаться
       </a>
