@@ -140,8 +140,8 @@ def follow_index(request):
 
 @login_required
 def profile_follow(request, username):
-    assert  str(request.user) == str(username), (
-            "Нельзя подписаться на себя "
+    assert str(request.user) == str(username), (
+        "Нельзя подписаться на себя "
     )
     author = get_object_or_404(User, username=username)
     Follow.objects.create(
