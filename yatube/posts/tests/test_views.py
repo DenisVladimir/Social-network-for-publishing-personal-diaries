@@ -1,12 +1,10 @@
 from http import HTTPStatus
-
+from django.core.cache import cache
 from django import forms
 from django.contrib.auth import get_user_model
 from django.test import Client, TestCase
 from django.urls import reverse
 from posts.models import Group, Post, Follow
-
-# 6 sprint
 import tempfile
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.conf import settings
@@ -51,10 +49,11 @@ class PostPagesTest(TestCase):
         self.guest_client = Client()
         self.authorized_client = Client()
         self.authorized_client.force_login(PostPagesTest.user)
+        cache.clear()
 
     def test_pages_user_correct_template(self):
         template_pages_names = {
-            # 'posts/index.html': reverse('posts:index'),
+            'posts/index.html': reverse('posts:index'),
             'posts/group_list.html': reverse(
                 'posts:group_list', kwargs={'slug': 'test_slug'}
             ),
@@ -71,7 +70,6 @@ class PostPagesTest(TestCase):
         for template, reverse_name in template_pages_names.items():
             with self.subTest(reverse_name=reverse_name):
                 response = self.authorized_client.get(reverse_name)
-                # print(response, template)
                 self.assertTemplateUsed(response, template)
                 self.assertEqual(response.status_code, HTTPStatus.OK)
 
@@ -79,14 +77,6 @@ class PostPagesTest(TestCase):
         # Проверка корректности возвращемого шаблона страницей create.
         response = self.authorized_client.get(reverse('posts:post_create'))
         self.assertTemplateUsed(response, 'posts/create_post.html')
-    """
-    def test_home_page_show_correct_context(self):
-        # Шаблон сформирован с правильным контекстом  posts/index.html.
-        response = self.authorized_client.get('posts:index')
-        first_object = response.context['page_obj'][0]
-        self.assertEqual(first_object.text, 'Тестовый пост')
-        self.assertEqual(first_object.author, PostPagesTest.user)
-    """
 
     def test_group_list_page_show_correct_context(self):
         responce = self.authorized_client.get(
@@ -164,7 +154,7 @@ class PostPagesTest(TestCase):
 
     def test_additional_to_enter_posts_all(self):
         address = [
-            # reverse('posts:index'),
+            reverse('posts:index'),
             reverse('posts:group_list', kwargs={'slug': 'test_slug'}),
             reverse('posts:profile', kwargs={'username': 'StasVlasov'})
         ]
@@ -173,12 +163,11 @@ class PostPagesTest(TestCase):
             for one_post in first_object.context['page_obj']:
                 self.assertEqual(str(one_post), str(PostPagesTest.post))
 
-    # 6 sprint
     def test_correct_context_image(self):
         """ Шаблон сформирован с правильным контекстом  picture """
         post_image = PostPagesTest.post.image
         template_pages_names = [
-            # sreverse('posts:index'),
+            reverse('posts:index'),
             reverse('posts:group_list', kwargs={'slug': 'test_slug'}),
             reverse('posts:profile', kwargs={'username': 'StasVlasov'}),
         ]
@@ -192,6 +181,41 @@ class PostPagesTest(TestCase):
         )
         posts_image_1 = response_2.context.get('post').image
         self.assertEqual(posts_image_1, post_image)
+
+
+class CacheTest(TestCase):
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls.user = User.objects.create_user(username='StasVlasov')
+        # создание объекта группы
+        cls.group = Group.objects.create(
+            title='Тестовая группа',
+            slug='test_slug',
+            description='Тестовое описание',
+        )
+        # создение тестового поста
+        cls.post = Post.objects.create(
+            author=cls.user,
+            text='Тестовый пост',
+            group=cls.group
+        )
+
+    def setUp(self):
+        # Неавторизированный пользователь
+        self.guest_client = Client()
+
+    def test_home_page_cache(self):
+        """Тест кэширования страницы index.html"""
+        first_state = self.guest_client.get(reverse('posts:index'))
+        post_1 = Post.objects.get(pk=1)
+        post_1.text = 'Измененный текст'
+        post_1.save()
+        second_state = self.guest_client.get(reverse('posts:index'))
+        self.assertEqual(first_state.content, second_state.content)
+        cache.clear()
+        third_state = self.guest_client.get(reverse('posts:index'))
+        self.assertNotEqual(first_state.content, third_state.content)
 
 
 class FollowTests(TestCase):
@@ -237,20 +261,12 @@ class FollowTests(TestCase):
         response = self.client_auth_following.get('/follow/')
         self.assertNotContains(response,
                                'Тестовая запись для тестирования ленты')
-    """
-    def test_add_comment(self):
-        self.client_auth_following.post(f'/following/{self.post.id}/comment',
-                                        {'text': "тестовый комментарий"},
-                                        follow=True)
-        response = self.client_auth_following.\
-            get(f'/following/{self.post.id}/')
-        self.assertContains(response, 'тестовый комментарий')
-        self.client_auth_following.logout()
-        self.client_auth_following.post(f'/following/{self.post.id}/comment',
-                                        {'text': "комментарий от гостя"},
-                                        follow=True)
-        response = self.client_auth_following.\
-            get(f'/following/{self.post.id}/')
-        self.assertNotContains(response, 'комментарий от гостя')
 
-    """
+    def test_add_comment(self):
+        self.client_auth_following.post(
+            f'/posts/{self.post.id}/comment/',
+            {'text': "тестовый комментарий"},
+            follow=True
+        )
+        comment = self.post.comments.filter(text='тестовый комментарий')[0]
+        self.assertEqual(comment.text, 'тестовый комментарий')

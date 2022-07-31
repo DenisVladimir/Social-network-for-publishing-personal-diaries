@@ -3,6 +3,7 @@ from http import HTTPStatus
 from django.contrib.auth import get_user_model
 from django.test import Client, TestCase
 from posts.models import Group, Post
+from django.core.cache import cache
 
 User = get_user_model()
 
@@ -29,6 +30,7 @@ class StaticURLTests(TestCase):
         self.guest_client = Client()
         self.authorized_client = Client()
         self.authorized_client.force_login(StaticURLTests.user)
+        cache.clear()
 
     def test_urls_availability_page(self):
         url_names = {
@@ -55,7 +57,7 @@ class StaticURLTests(TestCase):
 
     def test_urls_uses_correct_template(self):
         template_url_names = {
-            # 'posts/index.html': '/',
+            'posts/index.html': '/',
             'posts/group_list.html': '/group/test_slug/',
             'posts/profile.html': f'/profile/{StaticURLTests.user.username}/',
             'posts/post_detail.html':

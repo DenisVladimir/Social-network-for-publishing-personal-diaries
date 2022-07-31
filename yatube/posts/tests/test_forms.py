@@ -2,6 +2,7 @@ from django.contrib.auth import get_user_model
 from django.test import Client, TestCase
 from django.urls import reverse
 from posts.models import Group, Post
+from django.core.cache import cache
 
 # 6 sprint
 from django.core.files.uploadedfile import SimpleUploadedFile
@@ -16,7 +17,7 @@ class PostFormTests(TestCase):
         cls.user = User.objects.create_user(username='StasLubar')
         cls.group = Group.objects.create(
             title='Тестовый заголовок',
-            slug='test-slug',
+            slug='test_slug',
         )
         cls.post = Post.objects.create(
             pk=10,
@@ -30,6 +31,7 @@ class PostFormTests(TestCase):
         self.guest_client = Client()
         self.authorized_client = Client()
         self.authorized_client.force_login(self.user)
+        cache.clear()
 
     def test_create_post(self):
         """Валидная форма создает запись в Post."""
@@ -120,3 +122,13 @@ class PostFormTests(TestCase):
             follow=True,
         )
         self.assertEqual(Post.objects.count(), count_posts + 1)
+        post_0 = Post.objects.get(text='Пост с картинкой')
+        url_addres_site = [
+            reverse('posts:index'),
+            reverse('posts:group_list', kwargs={'slug': 'test_slug'}),
+            reverse('posts:profile', kwargs={'username': 'StasLubar'})
+        ]
+        for address in url_addres_site:
+            response = self.authorized_client.get(address)
+            test_image = response.context['page_obj'][0].image
+            self.assertEqual(post_0.image, test_image)

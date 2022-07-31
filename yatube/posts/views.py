@@ -1,10 +1,10 @@
-from django.shortcuts import render, get_object_or_404, redirect
-from .models import Post, Group, User, Follow
-from .utils import My_paginator, Source_author, Source_posts
 from django.contrib.auth.decorators import login_required
-from .forms import PostForm, CommentForm
+from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.cache import cache_page
 
+from .forms import CommentForm, PostForm
+from .models import Follow, Group, Post, User
+from .utils import my_paginator, source_author, source_posts
 
 NUM_OF_POSTS = 10
 
@@ -13,7 +13,7 @@ NUM_OF_POSTS = 10
 def index(request):
     template = 'posts/index.html'
     post_list = Post.objects.all()
-    page_obj = My_paginator(
+    page_obj = my_paginator(
         request,
         post_list,
         NUM_OF_POSTS
@@ -29,7 +29,7 @@ def group_posts(request, slug):
     group = get_object_or_404(Group, slug=slug)
     # group-object, groups-related name models, all()- all posts group
     post_list = group.groups.all()
-    page_obj = My_paginator(request, post_list, NUM_OF_POSTS)
+    page_obj = my_paginator(request, post_list, NUM_OF_POSTS)
     context = {
         'group': group,
         'page_obj': page_obj,
@@ -43,8 +43,8 @@ def profile(request, username):
     post_list = author.posts.all()
     amount_posts = post_list.count()
     all_following = Follow.objects.filter(user_id=request.user.pk)
-    following = Source_author(all_following, username)
-    page_obj = My_paginator(request, post_list, NUM_OF_POSTS)
+    following = source_author(all_following, username)
+    page_obj = my_paginator(request, post_list, NUM_OF_POSTS)
     context = {
         'author': author,
         'page_obj': page_obj,
@@ -130,8 +130,8 @@ def add_comment(request, post_id):
 def follow_index(request):
     user = get_object_or_404(User, username=request.user.username)
     all_favorite_authors = user.follower.all()
-    post_list = Source_posts(all_favorite_authors)
-    page_obj = My_paginator(request, post_list, NUM_OF_POSTS)
+    post_list = source_posts(all_favorite_authors)
+    page_obj = my_paginator(request, post_list, NUM_OF_POSTS)
     context = {
         'page_obj': page_obj
     }
