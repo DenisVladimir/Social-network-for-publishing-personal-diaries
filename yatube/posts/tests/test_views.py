@@ -74,7 +74,6 @@ class PostPagesTest(TestCase):
                 self.assertEqual(response.status_code, HTTPStatus.OK)
 
     def test_post_create_page_correct_template(self):
-        # Проверка корректности возвращемого шаблона страницей create.
         response = self.authorized_client.get(reverse('posts:post_create'))
         self.assertTemplateUsed(response, 'posts/create_post.html')
 
@@ -119,7 +118,6 @@ class PostPagesTest(TestCase):
                 self.assertIsInstance(form_field, expected)
 
     def test_paginator_pages_all(self):
-        # Test proverci paginatorov
         obj_post = [
             Post(
                 text='Тестовый пост',
@@ -188,13 +186,11 @@ class CacheTest(TestCase):
     def setUpClass(cls):
         super().setUpClass()
         cls.user = User.objects.create_user(username='StasVlasov')
-        # создание объекта группы
         cls.group = Group.objects.create(
             title='Тестовая группа',
             slug='test_slug',
             description='Тестовое описание',
         )
-        # создение тестового поста
         cls.post = Post.objects.create(
             author=cls.user,
             text='Тестовый пост',
@@ -202,11 +198,10 @@ class CacheTest(TestCase):
         )
 
     def setUp(self):
-        # Неавторизированный пользователь
         self.guest_client = Client()
 
     def test_home_page_cache(self):
-        """Тест кэширования страницы index.html"""
+        """ Тест кэширования страницы index.html """
         first_state = self.guest_client.get(reverse('posts:index'))
         post_1 = Post.objects.get(pk=1)
         post_1.text = 'Измененный текст'
@@ -251,13 +246,11 @@ class FollowTests(TestCase):
         self.assertEqual(Follow.objects.all().count(), 0)
 
     def test_subscription_feed(self):
-        # запись появляется в ленте подписчиков
         Follow.objects.create(user=self.user_follower,
                               author=self.user_following)
         response = self.client_auth_follower.get('/follow/')
         post_text_0 = response.context["page_obj"][0].text
         self.assertEqual(post_text_0, 'Тестовая запись для тестирования ленты')
-        # в качестве неподписанного пользователя проверяем собственную ленту
         response = self.client_auth_following.get('/follow/')
         self.assertNotContains(response,
                                'Тестовая запись для тестирования ленты')

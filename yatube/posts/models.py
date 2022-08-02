@@ -12,9 +12,7 @@ class Post(models.Model):
         User,
         on_delete=models.CASCADE,
         related_name='posts'
-    )  # полея для указания ссылки на другую модель(другую таблицу)
-    # on_delete=models.CASCADE обеспечивает связанность данных
-    # при удаление пользователя будут удалены все посты
+    )
     group = models.ForeignKey(
         'Group',
         blank=True,
@@ -22,10 +20,9 @@ class Post(models.Model):
         on_delete=models.SET_NULL,
         related_name='groups'
     )
-    # Поле для картинки  (не обязательное)
     image = models.ImageField(
         'Картинка',
-        upload_to='posts/',  # Дирректория куда будут загружаться файлы
+        upload_to='posts/',
         blank=True
     )
 
@@ -33,7 +30,6 @@ class Post(models.Model):
         ordering = ['-pub_date']
 
     def __str__(self):
-        # выводим текст поста
         return self.text[0:15]
 
 
@@ -64,13 +60,11 @@ class Comment(models.Model):
 
 class Follow(models.Model):
     """ Модель системы подписки """
-    # Кто подписан
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
         related_name='follower'
     )
-    # На кого подписан
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,

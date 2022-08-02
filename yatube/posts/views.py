@@ -27,7 +27,6 @@ def index(request):
 def group_posts(request, slug):
     template = 'posts/group_list.html'
     group = get_object_or_404(Group, slug=slug)
-    # group-object, groups-related name models, all()- all posts group
     post_list = group.groups.all()
     page_obj = my_paginator(request, post_list, NUM_OF_POSTS)
     context = {

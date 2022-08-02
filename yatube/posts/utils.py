@@ -16,11 +16,8 @@ def source_author(all_fallower, username):
 
 
 def source_posts(all_favorite_authors):
-    posts_data = []  # Массив со всеми постами любимых авторов
-    # Получаем автора из массива любимых авторов
+    posts_data = []
     for object_author in all_favorite_authors:
-        # Получаем каждый пост автора чер releted_name
         for post in object_author.author.posts.all():
-            posts_data.append(post)  # Добовляем в массив со всеми постамии
-    # Возвращаем все посты любимых авторов для отображения на странице
+            posts_data.append(post)
     return posts_data

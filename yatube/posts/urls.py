@@ -1,6 +1,6 @@
 from django.urls import path
 from . import views
-# имя пространста имен
+
 app_name = 'posts'
 
 urlpatterns = [

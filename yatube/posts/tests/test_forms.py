@@ -4,7 +4,7 @@ from django.urls import reverse
 from posts.models import Group, Post
 from django.core.cache import cache
 
-# 6 sprint
+
 from django.core.files.uploadedfile import SimpleUploadedFile
 
 User = get_user_model()
@@ -52,7 +52,6 @@ class PostFormTests(TestCase):
         self.assertEqual(Post.objects.count(), post_count + 1)
 
     def test_create_post_guest_client(self):
-        # Валидная форма создает запись в Post. Гостевого пользователя(нельзя)
         response = self.guest_client.get(
             reverse('posts:update_post', kwargs={'post_id': 1})
         )
@@ -92,8 +91,6 @@ class PostFormTests(TestCase):
         )
         self.assertEqual(edit_post_var.text, form_data['text'])
         self.assertEqual(edit_post_var.author, self.post.author)
-
-    # Дополнительные тесты к 6 спринту
 
     def test_post_with_picture(self):
         # Создается пост с картинкой

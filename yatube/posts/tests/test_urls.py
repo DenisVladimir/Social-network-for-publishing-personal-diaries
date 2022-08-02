@@ -18,7 +18,6 @@ class StaticURLTests(TestCase):
             slug='test_slug',
             description='Тестовое описание',
         )
-        # создение тестового поста
         cls.post = Post.objects.create(
             author=cls.user,
             text='Тестовый пост',
